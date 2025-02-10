@@ -1,57 +1,45 @@
-/* TODO: Add library for pthreads */
-
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
 
-/* TODO: define a default of 4 threads */
+// Default number of threads
+#define NUM_THREADS 4
 
-/* Size of array to work with */
+// Default array dimensions
 #define NUM_ROWS 100
 #define NUM_COLS 100
 
+// Large array variables
 double **large_array;
 double large_array_size;
 
-/* TODO: declare variabel that holds a default
- * number of threads or user supplied value
- * from command line
- */
-int total_threads = 1;
+// NOTE: The user should be able to provide this value.
+int total_threads = NUM_THREADS;
 
 void *transcendental_function_calc(void *t)
 {
-    int i;
-    long tid;
-    tid = (long)t;
+    long tid = (long)t;
     int total_calcs = 0;
     printf("Thread %ld of %d starting...\n", tid, total_threads);
 
-    /* TODO: Only have thread i work it's cells of the array
-     * For example, thread 0 would work on 0, 4, 8, 12, etc.
-     * thread 1 would work on 1, 5, 9, 13, etc.
-     */
-    for (int i = 0; i < NUM_ROWS; i++)
+    // We'll allow each thread to have its own rows and columns.
+    for (long i = tid; i < NUM_ROWS; i += NUM_THREADS)
     {
-        for (int j = 0; j < NUM_COLS; j++)
+        for (long j = tid; j < NUM_COLS; j += NUM_THREADS)
         {
-            if (1)
-            {
-                total_calcs++;
+            total_calcs++;
 
-                /* Debugging aid remove in starter
-                //large_array[i][j] = NUM_COLS * i+j;
-
-                /* transcendtial function, oh fun*/
-                large_array[i][j] = sin(i) * tan(j);
-            }
+            /* transcendtial function, oh fun*/
+            large_array[i][j] = sin(i) * tan(j);
         }
     }
 
     printf("Thread %ld done. total_calcs=%d\n", tid, total_calcs);
 
-    /* TODO: exit each thread here */
+    // Exit the thread
+    pthread_exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char *argv[])
@@ -61,18 +49,17 @@ int main(int argc, char *argv[])
 
     measure_me = clock();
 
-    /* TODO: Dynamically allocate array of threads
-     * as indicated on the command line or using
-     * the default define of NUM_THREADS 4
-     */
+    // NUM_THREADS override
+    if (argc > 1)
+    {
+        total_threads = atoi(argv[1]);
+    }
 
-    /* TODO: Create a pthread attribute structure variable to control
-     * the overall operation of threads in this application
-     */
+    // Allocate thread array.
+    pthread_t *threads = malloc(total_threads * sizeof(pthread_t));
 
-    int rc;
-    long t;
-    void *status;
+    // Set up thread structure.
+    pthread_attr_t attr;
 
     large_array = (double **)malloc(NUM_ROWS * sizeof(double *));
     for (int i = 0; i < NUM_ROWS; i++)
@@ -80,20 +67,16 @@ int main(int argc, char *argv[])
 
     large_array_size = NUM_ROWS * NUM_COLS;
 
-    /* TODO: Initialize and set thread detached attribute
-     * use state joinable
-     */
+    // Initialize thread structure.
+    pthread_attr_init(&attr);
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 
-    /* TODO:
-     * Create each thread in a for loop and have it call the
-     * transcendental_function_calc using only the loop
-     * counter as the single parameter
-     */
-    for (t = 0; t < total_threads; t++)
+    // Create threads.
+    for (long t = 0; t < total_threads; t++)
     {
         printf("Main: creating thread %ld\n", t);
 
-        // TODO: something here
+        int rc = pthread_create(&threads[t], &attr, transcendental_function_calc, (void *)t);
 
         if (rc)
         {
@@ -102,16 +85,16 @@ int main(int argc, char *argv[])
         }
     }
 
-    /* TODO:
-     * Free attribute and wait for the other threads
-     * Do not forget to release resources
-     */
+    // Free thread structure.
+    pthread_attr_destroy(&attr);
 
-    // TODO: something here pthread related
-    for (t = 0; t < total_threads; t++)
+    // Join threads.
+    for (long t = 0; t < total_threads; t++)
     {
+        void *status;
 
-        // TODO: something here too pthread related
+        int rc = pthread_join(threads[t], &status);
+
         if (rc)
         {
             printf("ERROR; return code from pthread_join() is %d\n", rc);
@@ -131,9 +114,12 @@ int main(int argc, char *argv[])
     fclose(fp);
 
     /* Release acquired memory for array */
+    for (int i = 0; i < NUM_ROWS; i++)
+        free(large_array[i]);
     free(large_array);
 
-    /* TODO: Release acquired memory for thread array */
+    // Release acquired memory for thread array.
+    free(threads);
 
     /* Complete and show timing information for run */
     printf("Main: program completed. Exiting.\n");
@@ -141,5 +127,6 @@ int main(int argc, char *argv[])
     double total_time = ((double)measure_me) / CLOCKS_PER_SEC;
     printf("Took %f seconds to execute\n", total_time);
 
-    /* TODO: Close main thread */
+    // Close main thread.
+    return EXIT_SUCCESS;
 }
