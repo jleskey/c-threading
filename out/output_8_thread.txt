@@ -1,0 +1,34 @@
+Main: creating thread 0
+Main: creating thread 1
+Thread 0 of 8 starting...
+Main: creating thread 2
+Main: creating thread 3
+Thread 1 of 8 starting...
+Main: creating thread 4
+Thread 2 of 8 starting...
+Thread 0 done. total_calcs=1300
+Main: creating thread 5
+Thread 1 done. total_calcs=1300
+Thread 3 of 8 starting...
+Thread 4 of 8 starting...
+Thread 2 done. total_calcs=1300
+Thread 3 done. total_calcs=1300
+Thread 4 done. total_calcs=1200
+Main: creating thread 6
+Thread 5 of 8 starting...
+Main: creating thread 7
+Main: completed join with thread 0 having a status of 0
+Main: completed join with thread 1 having a status of 0
+Main: completed join with thread 2 having a status of 0
+Thread 5 done. total_calcs=1200
+Thread 6 of 8 starting...
+Thread 6 done. total_calcs=1200
+Main: completed join with thread 3 having a status of 0
+Thread 7 of 8 starting...
+Main: completed join with thread 4 having a status of 0
+Thread 7 done. total_calcs=1200
+Main: completed join with thread 5 having a status of 0
+Main: completed join with thread 6 having a status of 0
+Main: completed join with thread 7 having a status of 0
+Main: program completed. Exiting.
+Took 0.003359 seconds to execute

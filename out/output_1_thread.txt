@@ -1,0 +1,6 @@
+Main: creating thread 0
+Thread 0 of 1 starting...
+Thread 0 done. total_calcs=10000
+Main: completed join with thread 0 having a status of 0
+Main: program completed. Exiting.
+Took 0.003182 seconds to execute

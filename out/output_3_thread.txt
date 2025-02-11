@@ -1,0 +1,14 @@
+Main: creating thread 0
+Main: creating thread 1
+Thread 0 of 3 starting...
+Main: creating thread 2
+Thread 1 of 3 starting...
+Thread 2 of 3 starting...
+Thread 0 done. total_calcs=3400
+Thread 1 done. total_calcs=3300
+Thread 2 done. total_calcs=3300
+Main: completed join with thread 0 having a status of 0
+Main: completed join with thread 1 having a status of 0
+Main: completed join with thread 2 having a status of 0
+Main: program completed. Exiting.
+Took 0.003074 seconds to execute
