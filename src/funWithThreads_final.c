@@ -57,14 +57,16 @@ int main(int argc, char *argv[])
     {
         total_threads = atoi(argv[1]);
 
-        if (total_threads < 1) {
+        if (total_threads < 1)
+        {
             fprintf(stderr, "Invalid thread count: %d", total_threads);
             exit(EXIT_FAILURE);
-        } else if (total_threads > NUM_ROWS) {
-            printf(
-                "Chosen thread count exceeds total number of rows."
-                " Limiting to %d", NUM_ROWS
-            );
+        }
+        else if (total_threads > NUM_ROWS)
+        {
+            printf("Chosen thread count exceeds total number of rows. "
+                   "Limiting to %d.\n",
+                   NUM_ROWS);
             total_threads = NUM_ROWS;
         }
     }
@@ -79,7 +81,8 @@ int main(int argc, char *argv[])
     large_array = (double **)malloc(NUM_ROWS * sizeof(double *));
     check_allocation(large_array);
 
-    for (int i = 0; i < NUM_ROWS; i++) {
+    for (int i = 0; i < NUM_ROWS; i++)
+    {
         large_array[i] = (double *)malloc(NUM_COLS * sizeof(double));
         check_allocation(large_array[i]);
     }
