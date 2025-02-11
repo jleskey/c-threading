@@ -6,3 +6,6 @@ dist/
 
 # Locks
 .~lock.*
+
+# Debug files
+output.txt
