@@ -56,6 +56,17 @@ int main(int argc, char *argv[])
     if (argc > 1)
     {
         total_threads = atoi(argv[1]);
+
+        if (total_threads < 1) {
+            fprintf(stderr, "Invalid thread count: %d", total_threads);
+            exit(EXIT_FAILURE);
+        } else if (total_threads > NUM_ROWS) {
+            printf(
+                "Chosen thread count exceeds total number of rows."
+                " Limiting to %f", NUM_ROWS
+            );
+            total_threads = NUM_ROWS;
+        }
     }
 
     // Allocate thread array.
@@ -116,7 +127,7 @@ int main(int argc, char *argv[])
     fp = fopen("output.txt", "w");
     for (int i = 0; i < NUM_ROWS; i++)
     {
-        for (int j = 0; j < NUM_ROWS; j++)
+        for (int j = 0; j < NUM_COLS; j++)
             fprintf(fp, "%d %d = %f\n", i, j, large_array[i][j]);
     }
     fclose(fp);
