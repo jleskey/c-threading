@@ -18,16 +18,19 @@ double large_array_size;
 // NOTE: The user should be able to provide this value.
 int total_threads = NUM_THREADS;
 
+// Utility function declaration
+void check_allocation(void *ptr);
+
 void *transcendental_function_calc(void *t)
 {
     long tid = (long)t;
     int total_calcs = 0;
     printf("Thread %ld of %d starting...\n", tid, total_threads);
 
-    // We'll allow each thread to have its own rows and columns.
-    for (long i = tid; i < NUM_ROWS; i += NUM_THREADS)
+    // We'll split up the rows between the threads.
+    for (long i = tid; i < NUM_ROWS; i += total_threads)
     {
-        for (long j = tid; j < NUM_COLS; j += NUM_THREADS)
+        for (long j = 0; j < NUM_COLS; j++)
         {
             total_calcs++;
 
@@ -39,7 +42,7 @@ void *transcendental_function_calc(void *t)
     printf("Thread %ld done. total_calcs=%d\n", tid, total_calcs);
 
     // Exit the thread
-    pthread_exit(EXIT_SUCCESS);
+    pthread_exit(NULL);
 }
 
 int main(int argc, char *argv[])
@@ -49,7 +52,7 @@ int main(int argc, char *argv[])
 
     measure_me = clock();
 
-    // NUM_THREADS override
+    // total_threads override
     if (argc > 1)
     {
         total_threads = atoi(argv[1]);
@@ -57,13 +60,18 @@ int main(int argc, char *argv[])
 
     // Allocate thread array.
     pthread_t *threads = malloc(total_threads * sizeof(pthread_t));
+    check_allocation(threads);
 
     // Set up thread structure.
     pthread_attr_t attr;
 
     large_array = (double **)malloc(NUM_ROWS * sizeof(double *));
-    for (int i = 0; i < NUM_ROWS; i++)
+    check_allocation(large_array);
+
+    for (int i = 0; i < NUM_ROWS; i++) {
         large_array[i] = (double *)malloc(NUM_COLS * sizeof(double));
+        check_allocation(large_array[i]);
+    }
 
     large_array_size = NUM_ROWS * NUM_COLS;
 
@@ -129,4 +137,13 @@ int main(int argc, char *argv[])
 
     // Close main thread.
     return EXIT_SUCCESS;
+}
+
+void check_allocation(void *ptr)
+{
+    if (ptr == NULL)
+    {
+        fprintf(stderr, "Could not allocate memory.\n");
+        exit(EXIT_FAILURE);
+    }
 }
