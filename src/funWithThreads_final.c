@@ -98,7 +98,8 @@ int main(int argc, char *argv[])
     {
         printf("Main: creating thread %ld\n", t);
 
-        int rc = pthread_create(&threads[t], &attr, transcendental_function_calc, (void *)t);
+        int rc = pthread_create(&threads[t], &attr,
+                                transcendental_function_calc, (void *)t);
 
         if (rc)
         {
@@ -122,7 +123,8 @@ int main(int argc, char *argv[])
             printf("ERROR; return code from pthread_join() is %d\n", rc);
             exit(-1);
         }
-        printf("Main: completed join with thread %ld having a status of %ld\n", t, (long)status);
+        printf("Main: completed join with thread %ld having a status of %ld\n",
+                t, (long)status);
     }
 
     // Simple debugging loop if needed
