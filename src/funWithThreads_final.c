@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
         } else if (total_threads > NUM_ROWS) {
             printf(
                 "Chosen thread count exceeds total number of rows."
-                " Limiting to %f", NUM_ROWS
+                " Limiting to %d", NUM_ROWS
             );
             total_threads = NUM_ROWS;
         }
